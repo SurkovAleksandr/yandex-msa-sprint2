@@ -49,13 +49,18 @@
 ```bash
 cd test/
 docker build -t hotelio-tester .
-docker run --rm \                                                                                                                                                                   ok | 4s | 01:49:56
-  -e DB_HOST=host.docker.internal \
+```
+
+Перед запуском надо запустить docker compose с сервисами hotelio
+```shell
+docker run --rm \
+  -e DB_HOST=hotelio-db \
   -e DB_PORT=5432 \
   -e DB_NAME=hotelio \
   -e DB_USER=hotelio \
   -e DB_PASSWORD=hotelio \
-  -e API_URL=http://host.docker.internal:8084 \
+  -e API_URL=http://hotelio-monolith:8080 \
+  --network hotelio-net \
   hotelio-tester
 ```
 
