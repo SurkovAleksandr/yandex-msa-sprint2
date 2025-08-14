@@ -6,25 +6,55 @@ import gql from 'graphql-tag';
 const typeDefs = gql`
   type Hotel @key(fields: "id") {
     id: ID!
-    name: String
+    operational: Boolean
+    fullyBooked: Boolean
     city: String
-    stars: Int
+    rating: Float
+    description: String
   }
 
   type Query {
+    hotel(id: ID!): Hotel
     hotelsByIds(ids: [ID!]!): [Hotel]
   }
 `;
 
+const MONOLITH_URL = process.env.MONOLITH_URL;
+
+async function fetchHotelById(id) {
+  const url = `${MONOLITH_URL}${id}`;
+
+  const response = await fetch(url);
+  if (response.ok) {
+    const json = await response.json();
+    console.log(json);
+    return json;
+  } else {
+    console.error('Ошибка HTTP:', response.status);
+    return null;
+  }
+}
+
 const resolvers = {
   Hotel: {
-    __resolveReference: async ({ id }) => {
-      // TODO: Реальный вызов к hotel-сервису или заглушка
+    __resolveReference: async ({ id }, ) => {
+      console.log(`Hotel.__resolveReference ids=${id}`);
+      // Реальный вызов к hotel-сервису
+      return await fetchHotelById(id);
     },
   },
   Query: {
+    hotel: async (_, { id }) => {
+      console.log(id)
+      return await fetchHotelById(id);
+    },
     hotelsByIds: async (_, { ids }) => {
-      // TODO: Заглушка или REST-запрос
+      console.log(`Query.hotelsByIds ids=${ids}`);
+      // REST-запрос
+      const hotels = await Promise.all(ids.map(id => fetchHotelById(id)));
+
+      // Фильтрация null-значения, если некоторые запросы ничего не вернули
+      return hotels.filter(h => h !== null);
     },
   },
 };

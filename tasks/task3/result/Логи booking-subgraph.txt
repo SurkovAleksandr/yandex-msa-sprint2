@@ -1,0 +1,30 @@
+Более наглядно видно в скриншотах
+Запрос
+query BookingsByUser {
+    bookingsByUser(userId: "test-user-3") {
+        id
+        userId
+        hotelId
+        promoCode
+        discountPercent
+        hotel {
+            id
+            operational
+            rating
+            city
+        }
+    }
+}
+
+
+Enabling inline tracing for this subgraph. To disable, use ApolloServerPluginInlineTraceDisabled.
+2025-08-14T18:53:39.079305172Z ✅ Booking subgraph ready at http://localhost:4001/
+2025-08-14T18:53:39.317166143Z undefined
+2025-08-14T18:53:46.615958782Z test-user-3
+2025-08-14T18:53:46.617668527Z bookingsByUser
+2025-08-14T18:53:46.617673375Z test-user-3
+2025-08-14T18:53:46.617705417Z BookingService.ListBookings userId:test-user-3
+2025-08-14T18:53:57.807510499Z my-user
+2025-08-14T18:53:57.807933898Z bookingsByUser
+2025-08-14T18:53:57.807940783Z my-user
+2025-08-14T18:53:57.807942145Z Access denied for user my-user

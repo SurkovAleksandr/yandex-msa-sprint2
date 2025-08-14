@@ -92,6 +92,8 @@ public class BookingServiceImpl extends BookingServiceGrpc.BookingServiceImplBas
 
     @Override
     public void listBookings(BookingListRequest request, StreamObserver<BookingListResponse> responseObserver) {
+        log.info("listBookings - userId: " + request.getUserId());
+
         List<Booking> bookings = request.getUserId() != null ? bookingRepository.findByUserId(request.getUserId()) : bookingRepository.findAll();
 
         log.info("Booking list: {}", bookings);
@@ -116,7 +118,7 @@ public class BookingServiceImpl extends BookingServiceGrpc.BookingServiceImplBas
                 .setId(booking.getId().toString())
                 .setUserId(booking.getUserId())
                 .setHotelId(booking.getHotelId())
-                .setPromoCode(booking.getPromoCode())
+                .setPromoCode(booking.getPromoCode() == null ? "null" : booking.getPromoCode())
                 .setDiscountPercent(booking.getDiscountPercent())
                 .setPrice(booking.getPrice())
                 .setCreatedAt(booking.getCreatedAt().toString())
