@@ -94,6 +94,9 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4001 },
+  /**
+   * Пример определения контекста можно посмотреть [The contextValue argument](https://www.apollographql.com/docs/apollo-server/data/resolvers#the-contextvalue-argument)
+   */
   context: async ({ req }) => {
     console.log(req.headers.userid)
     return {headerUserId: req.headers.userid}

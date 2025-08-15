@@ -1,0 +1,172 @@
+u-user@u-user:~/IdeaProjects/курсы/yandex-msa-sprint2/tasks/task4$ gitlab-ci-local build test deploy tag
+parsing and downloads finished in 37 ms.
+json schema validated in 154 ms
+build  starting shell (build)
+build  $ docker build -t $IMAGE_NAME:$IMAGE_TAG ./booking-service
+build  > #0 building with "default" instance using docker driver
+build  >
+build  > #1 [internal] load build definition from Dockerfile
+build  > #1 transferring dockerfile: 860B done
+build  > #1 DONE 0.0s
+build  >
+build  > #2 [internal] load metadata for docker.io/library/golang:1.21-alpine
+build  > #2 DONE 0.4s
+build  >
+build  > #3 [internal] load .dockerignore
+build  > #3 transferring context: 2B done
+build  > #3 DONE 0.0s
+build  >
+build  > #4 [1/5] FROM docker.io/library/golang:1.21-alpine@sha256:2414035b086e3c42b99654c8b26e6f5b1b1598080d65fd03c7f499552ff4dc94
+build  > #4 DONE 0.0s
+build  >
+build  > #5 [internal] load build context
+build  > #5 transferring context: 29B done
+build  > #5 DONE 0.0s
+build  >
+build  > #6 [2/5] RUN apk add --no-cache curl
+build  > #6 CACHED
+build  >
+build  > #7 [3/5] WORKDIR /app
+build  > #7 CACHED
+build  >
+build  > #8 [4/5] COPY main.go .
+build  > #8 CACHED
+build  >
+build  > #9 [5/5] RUN go build -o booking-service main.go
+build  > #9 CACHED
+build  >
+build  > #10 exporting to image
+build  > #10 exporting layers done
+build  > #10 writing image sha256:e765bc6dc511cebf55c9f4136a5e5a3d6c55edc35eb336212ebc9451ad3ca354 done
+build  > #10 naming to docker.io/library/task4-booking-service:latest done
+build  > #10 DONE 0.0s
+build  finished in 710 ms
+test   starting shell (test)
+test   $ docker run -d --name test-container -p 8080:8080 $IMAGE_NAME:$IMAGE_TAG
+test   > b26285951049154387666bd47cfca079bbde668f2730ec53ebc2047edbc6b734
+test   $ curl -sSf "http://localhost:8080/ping" | grep -q 'pong' && echo "Urrrraaa" || echo "No pong"
+test   > Urrrraaa
+test   $ docker rm -f test-container
+test   > test-container
+test   finished in 557 ms
+deploy starting shell (deploy)
+deploy $ minikube image load $IMAGE_NAME:$IMAGE_TAG
+deploy > still running...
+deploy $ helm upgrade sprint2-task4 ./helm/booking-service --debug
+deploy > upgrade.go:164: 2025-08-15 16:41:45.188142312 +0300 MSK m=+0.031837015 [debug] preparing upgrade for sprint2-task4
+deploy > upgrade.go:586: 2025-08-15 16:41:45.193323217 +0300 MSK m=+0.037017921 [debug] copying values from sprint2-task4 (v28) to new release.
+deploy > upgrade.go:172: 2025-08-15 16:41:45.246502906 +0300 MSK m=+0.090197609 [debug] performing update for sprint2-task4
+deploy > upgrade.go:375: 2025-08-15 16:41:45.297221013 +0300 MSK m=+0.140915715 [debug] creating upgraded release for sprint2-task4
+deploy > client.go:388: 2025-08-15 16:41:45.325354842 +0300 MSK m=+0.169049544 [debug] checking 2 resources for changes
+deploy > client.go:725: 2025-08-15 16:41:45.330552755 +0300 MSK m=+0.174247470 [debug] Looks like there are no changes for Service "sprint2-task4"
+deploy > client.go:725: 2025-08-15 16:41:45.336102459 +0300 MSK m=+0.179797161 [debug] Looks like there are no changes for Deployment "sprint2-task4"
+deploy > upgrade.go:180: 2025-08-15 16:41:45.345683288 +0300 MSK m=+0.189377992 [debug] updating status for upgraded release for sprint2-task4
+deploy > Release "sprint2-task4" has been upgraded. Happy Helming!
+deploy > NAME: sprint2-task4
+deploy > LAST DEPLOYED: Fri Aug 15 16:41:45 2025
+deploy > NAMESPACE: default
+deploy > STATUS: deployed
+deploy > REVISION: 29
+deploy > TEST SUITE: None
+deploy > USER-SUPPLIED VALUES:
+deploy > livenessProbe:
+deploy >   enabled: false
+deploy > readinessProbe:
+deploy >   enabled: false
+deploy >
+deploy > COMPUTED VALUES:
+deploy > environment:
+deploy >   ENABLE_FEATURE_X: "true"
+deploy > image:
+deploy >   name: task4-booking-service
+deploy >   pullPolicy: IfNotPresent
+deploy >   tag: latest
+deploy > livenessProbe:
+deploy >   enabled: false
+deploy >   failureThreshold: 3
+deploy >   httpGet:
+deploy >     path: /ping
+deploy >     port: 8080
+deploy >   initialDelaySeconds: 5
+deploy >   periodSeconds: 10
+deploy >   successThreshold: 1
+deploy >   timeoutSeconds: 2
+deploy > namespace: sprint2-task4
+deploy > readinessProbe:
+deploy >   enabled: false
+deploy >   failureThreshold: 3
+deploy >   httpGet:
+deploy >     path: /feature
+deploy >     port: 8080
+deploy >   initialDelaySeconds: 10
+deploy >   periodSeconds: 5
+deploy >   successThreshold: 1
+deploy >   timeoutSeconds: 2
+deploy > replicaCount: 1
+deploy > resources: null
+deploy > service:
+deploy >   port: 80
+deploy >   targetPort: 8080
+deploy >   type: ClusterIP
+deploy >
+deploy > HOOKS:
+deploy > MANIFEST:
+deploy > ---
+deploy > # Source: booking-service/templates/service.yaml
+deploy > apiVersion: v1
+deploy > kind: Service
+deploy > metadata:
+deploy >   name: sprint2-task4
+deploy >   namespace: sprint2-task4
+deploy >   labels:
+deploy >     app: sprint2-task4
+deploy > spec:
+deploy >   type: ClusterIP
+deploy >   ports:
+deploy >     - port: 80
+deploy >       targetPort: 8080
+deploy >       protocol: TCP
+deploy >       name: http
+deploy >   selector:
+deploy >     app: sprint2-task4
+deploy > ---
+deploy > # Source: booking-service/templates/deployment.yaml
+deploy > apiVersion: apps/v1
+deploy > kind: Deployment
+deploy > metadata:
+deploy >   name: sprint2-task4
+deploy >   namespace: sprint2-task4
+deploy >   labels:
+deploy >     app: sprint2-task4
+deploy >     app-version: "1.1"
+deploy > spec:
+deploy >   replicas: 1
+deploy >   selector:
+deploy >     matchLabels:
+deploy >       app: sprint2-task4
+deploy >   template:
+deploy >     metadata:
+deploy >       labels:
+deploy >         app: sprint2-task4
+deploy >     spec:
+deploy >       containers:
+deploy >         - name: booking-service
+deploy >           image: "task4-booking-service:latest"
+deploy >           imagePullPolicy: Never
+deploy >
+deploy >           ports:
+deploy >             - containerPort: 8080
+deploy >           env:
+deploy >             - name: ENABLE_FEATURE_X
+deploy >               value: "true"
+deploy >
+deploy finished in 14 s
+tag    starting shell (tag)
+tag    $ TIMESTAMP=$(date +%Y%m%d%H%M%S)
+tag    $ git tag -a "v1.0-$TIMESTAMP" -m "Release created at $TIMESTAMP"
+tag    finished in 10 ms
+
+ PASS  build
+ PASS  test
+ PASS  deploy
+ PASS  tag

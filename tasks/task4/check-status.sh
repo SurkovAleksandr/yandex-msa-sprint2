@@ -3,15 +3,15 @@
 set -e
 
 echo "▶️ Checking booking-service deployment..."
-kubectl get pods -l app=booking-service
+kubectl get pods -l app=sprint2-task4 --namespace sprint2-task4
 
 echo
 echo "▶️ Checking service..."
-kubectl get svc booking-service || echo "(No service found)"
+kubectl get svc sprint2-task4 --namespace sprint2-task4 || echo "(No service found)"
 
 echo
 echo "▶️ Helm release:"
-helm list | grep booking-service || echo "(No release found)"
+helm list | grep sprint2-task4 || echo "(No release found)"
 
 echo
 echo "▶️ Port-forward to test service locally:"
