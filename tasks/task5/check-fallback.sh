@@ -3,4 +3,7 @@
 set -e
 
 echo "▶️ Testing fallback route..."
-curl -s http://localhost:9090/ping || echo "Fallback route working"
+URL=$(minikube service booking-service --url)
+echo $URL
+
+curl -s http://$URL/ping #|| echo "Fallback route working"

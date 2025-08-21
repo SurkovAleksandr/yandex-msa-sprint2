@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-ui
+  labels:
+    app: booking-ui
+    version: "1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: booking-ui
+      version: "1.0"
+  template:
+    metadata:
+      labels:
+        app: booking-ui
+        version: "1.0"
+    spec:
+      containers:
+        - name: booking-ui
+          image: booking-ui:1.0
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ENABLE_FEATURE_X
+              value: "{{ .Values.environment.ENABLE_FEATURE_X }}"
+            - name: IMAGE_VERSION
+              value: "{{ .Chart.AppVersion }}"

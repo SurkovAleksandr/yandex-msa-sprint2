@@ -11,6 +11,15 @@ eval $(minikube docker-env)
 eval $(minikube docker-env -u)
 ```
 
+Проверить образ в minikube
+```shell
+minikube image list | grep task4
+```
+Это не то же самое, что
+```shell
+docker images | grep task4
+```
+
 Сборка образа
 ```shell
 docker build -t task4-booking-service ./booking-service
