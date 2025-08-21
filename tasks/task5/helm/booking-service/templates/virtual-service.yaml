@@ -1,12 +1,12 @@
 apiVersion: networking.istio.io/v1
 kind: VirtualService
-metadata:- "*"
+metadata:
   name: {{ .Chart.Name }}
 spec:
   hosts:
     # # должен совпадать или быть подмножеством hosts в Gateway
     - {{ .Chart.Name }}.default.svc.cluster.local
-    #
+    # - "*"
   gateways:
     - booking
   http:
